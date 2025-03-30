@@ -12,8 +12,8 @@ func main() {
 
 	// Настраиваем агент
 	agent := agent.NewAgent(
-		1*time.Second, // Интервал сбора метрик
-		2*time.Second, // Интервал отправки
+		2*time.Second,  // Интервал сбора метрик
+		10*time.Second, // Интервал отправки
 		sender,
 	)
 

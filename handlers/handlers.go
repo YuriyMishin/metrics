@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type MetricHandlers struct {
@@ -32,9 +34,11 @@ func (h *MetricHandlers) RootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MetricHandlers) UpdateHandler(w http.ResponseWriter, r *http.Request) {
-	metricType := r.PathValue("metricType")
-	metricName := r.PathValue("metricName")
-	metricValue := r.PathValue("metricValue")
+
+	vars := mux.Vars(r) // Получаем параметры из URL
+	metricType := vars["metricType"]
+	metricName := vars["metricName"]
+	metricValue := vars["metricValue"]
 
 	switch metricType {
 	case "gauge":
@@ -60,8 +64,9 @@ func (h *MetricHandlers) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MetricHandlers) ValueHandler(w http.ResponseWriter, r *http.Request) {
-	metricType := r.PathValue("metricType")
-	metricName := r.PathValue("metricName")
+	vars := mux.Vars(r) // Получаем параметры из URL
+	metricType := vars["metricType"]
+	metricName := vars["metricName"]
 
 	switch metricType {
 	case "gauge":
