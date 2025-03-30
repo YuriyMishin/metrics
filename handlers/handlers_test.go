@@ -55,7 +55,7 @@ func TestRootHandler(t *testing.T) {
 			name:           "with metrics",
 			gauges:         map[string]float64{"Alloc": 123.45},
 			counters:       map[string]int64{"PollCount": 1},
-			expectedOutput: "All Metrics:\n\nGauges:\nAlloc: 123.450000\n\nCounters:\nPollCount: 1\n",
+			expectedOutput: "All Metrics:\n\nGauges:\nAlloc: 123.450\n\nCounters:\nPollCount: 1\n",
 		},
 	}
 
@@ -181,7 +181,7 @@ func TestValueHandler(t *testing.T) {
 				m.On("GetGauge", "Alloc").Return(123.45, true).Once()
 			},
 			expectedCode: http.StatusOK,
-			expectedBody: "123.450000",
+			expectedBody: "123.450",
 		},
 		{
 			name:       "non-existing gauge",

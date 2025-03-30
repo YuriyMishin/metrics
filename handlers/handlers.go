@@ -24,7 +24,7 @@ func (h *MetricHandlers) RootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "All Metrics:")
 	fmt.Fprintln(w, "\nGauges:")
 	for name, value := range gauges {
-		fmt.Fprintf(w, "%s: %f\n", name, value)
+		fmt.Fprintf(w, "%s: %.3f\n", name, value)
 	}
 
 	fmt.Fprintln(w, "\nCounters:")
@@ -71,7 +71,7 @@ func (h *MetricHandlers) ValueHandler(w http.ResponseWriter, r *http.Request) {
 	switch metricType {
 	case "gauge":
 		if value, exists := h.storage.GetGauge(metricName); exists {
-			fmt.Fprintf(w, "%f", value)
+			fmt.Fprintf(w, "%.3f", value)
 			return
 		}
 	case "counter":
