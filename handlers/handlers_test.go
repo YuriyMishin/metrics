@@ -181,7 +181,7 @@ func TestValueHandler(t *testing.T) {
 				m.On("GetGauge", "Alloc").Return(123.45, true).Once()
 			},
 			expectedCode: http.StatusOK,
-			expectedBody: "Gauge Alloc: 123.450000",
+			expectedBody: "123.450000",
 		},
 		{
 			name:       "non-existing gauge",
@@ -203,7 +203,7 @@ func TestValueHandler(t *testing.T) {
 				m.On("GetCounter", "PollCount").Return(int64(1), true).Once()
 			},
 			expectedCode: http.StatusOK,
-			expectedBody: "Counter PollCount: 1",
+			expectedBody: "1",
 		},
 		{
 			name:          "invalid metric type",
