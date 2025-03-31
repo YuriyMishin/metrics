@@ -5,48 +5,94 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 )
 
-func parseAgentFlags() (string, time.Duration, time.Duration, error) {
-	var (
-		addr           string
-		pollInterval   int
-		reportInterval int
-	)
+type AgentConfig struct {
+	Addr           string
+	PollInterval   time.Duration
+	ReportInterval time.Duration
+}
 
-	flag.StringVar(&addr, "a", "localhost:8080", "HTTP server endpoint address")
-	flag.IntVar(&pollInterval, "p", 2, "Poll interval in seconds")
-	flag.IntVar(&reportInterval, "r", 10, "Report interval in seconds")
+func parseAgentFlags() (*AgentConfig, error) {
+	var (
+		flagAddr   string
+		flagPoll   int
+		flagReport int
+	)
+	defaultAddr := "localhost:8080"
+	defaultPoll := 2 * time.Second
+	defaultReport := 10 * time.Second
+
+	envAddr := os.Getenv("ADDRESS")
+	envPoll := os.Getenv("POLL_INTERVAL")
+	envReport := os.Getenv("REPORT_INTERVAL")
+
+	flag.StringVar(&flagAddr, "a", defaultAddr, "HTTP server endpoint address")
+	flag.IntVar(&flagPoll, "p", int(defaultPoll.Seconds()), "Poll interval in seconds")
+	flag.IntVar(&flagReport, "r", int(defaultReport.Seconds()), "Report interval in seconds")
 
 	flag.Parse()
 
 	if flag.NArg() > 0 {
-		return "", 0, 0, fmt.Errorf("unknown flags: %v", flag.Args())
+		return nil, fmt.Errorf("unknown flags: %v", flag.Args())
 	}
 
-	if pollInterval <= 0 {
-		return "", 0, 0, fmt.Errorf("poll интервал должен быть положительным")
-	}
-	if reportInterval <= 0 {
-		return "", 0, 0, fmt.Errorf("report интервал должен быть положительным")
+	config := &AgentConfig{
+		Addr:           defaultAddr,
+		PollInterval:   defaultPoll,
+		ReportInterval: defaultReport,
 	}
 
-	return addr, time.Duration(pollInterval) * time.Second,
-		time.Duration(reportInterval) * time.Second, nil
+	if flagAddr != defaultAddr {
+		config.Addr = flagAddr
+	}
+	if flagPoll != int(defaultPoll.Seconds()) {
+		config.PollInterval = time.Duration(flagPoll) * time.Second
+	}
+	if flagReport != int(defaultReport.Seconds()) {
+		config.ReportInterval = time.Duration(flagReport) * time.Second
+	}
+
+	if envAddr != "" {
+		config.Addr = envAddr
+	}
+	if envPoll != "" {
+		poll, err := strconv.Atoi(envPoll)
+		if err != nil || poll <= 0 {
+			return nil, fmt.Errorf("invalid POLL_INTERVAL value: %s", envPoll)
+		}
+		config.PollInterval = time.Duration(poll) * time.Second
+	}
+	if envReport != "" {
+		report, err := strconv.Atoi(envReport)
+		if err != nil || report <= 0 {
+			return nil, fmt.Errorf("invalid REPORT_INTERVAL value: %s", envReport)
+		}
+		config.ReportInterval = time.Duration(report) * time.Second
+	}
+
+	if config.PollInterval <= 0 {
+		return nil, fmt.Errorf("poll interval must be positive")
+	}
+	if config.ReportInterval <= 0 {
+		return nil, fmt.Errorf("report interval must be positive")
+	}
+
+	return config, nil
 }
 
 func main() {
-	addr, pollInterval, reportInterval, err := parseAgentFlags()
+	config, err := parseAgentFlags()
+
 	if err != nil {
-		log.Fatalf("Error parsing flags: %v", err)
+		panic(err)
 	}
 
-	// Создаем отправитель с RESTy клиентом
-	sender := agent.NewRestySender("http://" + addr)
-
-	// Настраиваем агент
-	agent := agent.NewAgent(pollInterval, reportInterval, sender)
+	sender := agent.NewRestySender("http://" + config.Addr)
+	agent := agent.NewAgent(config.PollInterval, config.ReportInterval, sender)
 
 	log.Println("Starting agent...")
 	agent.Run()
