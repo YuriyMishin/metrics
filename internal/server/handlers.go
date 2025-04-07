@@ -24,7 +24,7 @@ func (h *MetricHandlers) RootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "All Metrics:")
 	fmt.Fprintln(w, "\nGauges:")
 	for name, value := range gauges {
-		fmt.Fprintf(w, "%s: %.3f\n", name, value)
+		fmt.Fprintf(w, "%s: %g\n", name, value)
 	}
 
 	fmt.Fprintln(w, "\nCounters:")

@@ -181,7 +181,7 @@ func TestValueHandler(t *testing.T) {
 				m.On("GetGauge", "Alloc").Return(123.45, true).Once()
 			},
 			expectedCode: http.StatusOK,
-			expectedBody: "123.450",
+			expectedBody: "123.45",
 		},
 		{
 			name:       "non-existing gauge",
