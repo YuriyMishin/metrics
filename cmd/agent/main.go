@@ -1,7 +1,7 @@
 package main
 
 import (
-	"YuriyMishin/metrics/agent"
+	"YuriyMishin/metrics/internal/agent"
 	"flag"
 	"fmt"
 	"log"

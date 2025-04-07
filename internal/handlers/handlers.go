@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"YuriyMishin/metrics/storage"
+	"YuriyMishin/metrics/internal/storage"
 	"fmt"
 	"net/http"
 	"strconv"

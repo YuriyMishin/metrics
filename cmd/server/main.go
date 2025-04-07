@@ -1,7 +1,7 @@
 package main
 
 import (
-	"YuriyMishin/metrics/server"
+	"YuriyMishin/metrics/internal/server"
 	"flag"
 	"fmt"
 	"log"

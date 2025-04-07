@@ -1,8 +1,8 @@
 package server
 
 import (
-	"YuriyMishin/metrics/handlers"
-	"YuriyMishin/metrics/storage"
+	"YuriyMishin/metrics/internal/handlers"
+	"YuriyMishin/metrics/internal/storage"
 	"fmt"
 	"net/http"
 
