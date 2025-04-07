@@ -6,9 +6,8 @@ import (
 )
 
 type Metrics struct {
-	gauges    map[string]float64
-	counters  map[string]int64
-	pollCount int64
+	gauges   map[string]float64
+	counters map[string]int64
 }
 
 func NewMetrics() *Metrics {
@@ -18,12 +17,7 @@ func NewMetrics() *Metrics {
 	}
 }
 
-func (m *Metrics) UpdateAll() {
-	m.UpdateRuntimeMetrics()
-	m.UpdateCustomMetrics()
-}
-
-func (m *Metrics) UpdateRuntimeMetrics() {
+func (m *Metrics) UpdateMetrics() {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
@@ -54,10 +48,7 @@ func (m *Metrics) UpdateRuntimeMetrics() {
 	m.gauges["StackSys"] = float64(memStats.StackSys)
 	m.gauges["Sys"] = float64(memStats.Sys)
 	m.gauges["TotalAlloc"] = float64(memStats.TotalAlloc)
-}
-
-func (m *Metrics) UpdateCustomMetrics() {
-	m.pollCount++
-	m.counters["PollCount"] = m.pollCount
+	m.counters["PollCount"]++
 	m.gauges["RandomValue"] = rand.Float64()
+
 }

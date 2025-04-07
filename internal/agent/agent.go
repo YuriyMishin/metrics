@@ -30,7 +30,7 @@ func (a *Agent) Run() {
 	for {
 		select {
 		case <-pollTicker.C:
-			a.metrics.UpdateAll()
+			a.metrics.UpdateMetrics()
 			log.Println("Metrics updated")
 		case <-reportTicker.C:
 			if err := a.sender.Send(a.metrics); err != nil {
