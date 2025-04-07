@@ -55,7 +55,7 @@ func TestRootHandler(t *testing.T) {
 			name:           "with metrics",
 			gauges:         map[string]float64{"Alloc": 123.45},
 			counters:       map[string]int64{"PollCount": 1},
-			expectedOutput: "All Metrics:\n\nGauges:\nAlloc: 123.450\n\nCounters:\nPollCount: 1\n",
+			expectedOutput: "All Metrics:\n\nGauges:\nAlloc: 123.45\n\nCounters:\nPollCount: 1\n",
 		},
 	}
 
