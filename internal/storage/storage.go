@@ -5,7 +5,7 @@ type MemStorage struct {
 	counters map[string]int64
 }
 
-type Storage interface {
+type Repositories interface {
 	SetGauge(name string, value float64)
 	AddCounter(name string, value int64)
 	GetGauge(name string) (float64, bool)

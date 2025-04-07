@@ -1,6 +1,7 @@
-package handlers
+package server_test
 
 import (
+	"YuriyMishin/metrics/internal/server"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,7 +11,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockStorage реализует интерфейс storage.Storage для тестов
 type MockStorage struct {
 	mock.Mock
 }
@@ -64,7 +64,7 @@ func TestRootHandler(t *testing.T) {
 			mockStorage := new(MockStorage)
 			mockStorage.On("GetAllMetrics").Return(tt.gauges, tt.counters)
 
-			handler := NewMetricHandlers(mockStorage)
+			handler := server.NewMetricHandlers(mockStorage)
 			req := httptest.NewRequest("GET", "/", nil)
 			w := httptest.NewRecorder()
 
@@ -138,7 +138,7 @@ func TestUpdateHandler(t *testing.T) {
 			mockStorage := new(MockStorage)
 			tt.expectedCalls(mockStorage)
 
-			handler := NewMetricHandlers(mockStorage)
+			handler := server.NewMetricHandlers(mockStorage)
 
 			req := httptest.NewRequest("POST", tt.url, nil)
 			w := httptest.NewRecorder()
@@ -221,7 +221,7 @@ func TestValueHandler(t *testing.T) {
 			mockStorage := new(MockStorage)
 			tt.expectedCalls(mockStorage)
 
-			handler := NewMetricHandlers(mockStorage)
+			handler := server.NewMetricHandlers(mockStorage)
 
 			req := httptest.NewRequest("GET", tt.url, nil)
 			w := httptest.NewRecorder()

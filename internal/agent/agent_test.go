@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockSender - мок для интерфейса Sender
 type MockSender struct {
 	mock.Mock
 }

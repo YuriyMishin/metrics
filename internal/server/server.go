@@ -1,7 +1,6 @@
 package server
 
 import (
-	"YuriyMishin/metrics/internal/handlers"
 	"YuriyMishin/metrics/internal/storage"
 	"fmt"
 	"net/http"
@@ -15,7 +14,7 @@ type Server struct {
 
 func NewServer() *Server {
 	storage := storage.NewMemStorage()
-	metricHandlers := handlers.NewMetricHandlers(storage)
+	metricHandlers := NewMetricHandlers(storage)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", metricHandlers.RootHandler).Methods("GET")

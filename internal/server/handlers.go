@@ -1,4 +1,4 @@
-package handlers
+package server
 
 import (
 	"YuriyMishin/metrics/internal/storage"
@@ -10,10 +10,10 @@ import (
 )
 
 type MetricHandlers struct {
-	storage storage.Storage
+	storage storage.Repositories
 }
 
-func NewMetricHandlers(s storage.Storage) *MetricHandlers {
+func NewMetricHandlers(s storage.Repositories) *MetricHandlers {
 	return &MetricHandlers{storage: s}
 }
 
