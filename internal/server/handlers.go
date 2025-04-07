@@ -71,7 +71,7 @@ func (h *MetricHandlers) ValueHandler(w http.ResponseWriter, r *http.Request) {
 	switch metricType {
 	case "gauge":
 		if value, exists := h.storage.GetGauge(metricName); exists {
-			fmt.Fprintf(w, "%.3f", value)
+			fmt.Fprintf(w, "%g", value)
 			return
 		}
 	case "counter":
