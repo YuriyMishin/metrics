@@ -33,6 +33,11 @@ func (h *MetricHandlers) RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+const (
+	MetricTypeCounter string = "counter"
+	MetricTypeGauge   string = "gauge"
+)
+
 func (h *MetricHandlers) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r) // Получаем параметры из URL
@@ -41,14 +46,14 @@ func (h *MetricHandlers) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	metricValue := vars["metricValue"]
 
 	switch metricType {
-	case "gauge":
+	case MetricTypeGauge:
 		value, err := strconv.ParseFloat(metricValue, 64)
 		if err != nil {
 			http.Error(w, "Invalid gauge value", http.StatusBadRequest)
 			return
 		}
 		h.storage.SetGauge(metricName, value)
-	case "counter":
+	case MetricTypeCounter:
 		value, err := strconv.ParseInt(metricValue, 10, 64)
 		if err != nil {
 			http.Error(w, "Invalid counter value", http.StatusBadRequest)
@@ -69,12 +74,12 @@ func (h *MetricHandlers) ValueHandler(w http.ResponseWriter, r *http.Request) {
 	metricName := vars["metricName"]
 
 	switch metricType {
-	case "gauge":
+	case MetricTypeGauge:
 		if value, exists := h.storage.GetGauge(metricName); exists {
 			fmt.Fprintf(w, "%g", value)
 			return
 		}
-	case "counter":
+	case MetricTypeCounter:
 		if value, exists := h.storage.GetCounter(metricName); exists {
 			fmt.Fprintf(w, "%d", value)
 			return

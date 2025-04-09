@@ -1,29 +1,28 @@
 package agent
 
 import (
+	"YuriyMishin/metrics/internal/config"
 	"log"
 	"time"
 )
 
 type Agent struct {
-	pollInterval   time.Duration
-	reportInterval time.Duration
-	sender         Sender
-	metrics        *Metrics
+	config  *config.AgentConfig
+	sender  Sender
+	metrics *Metrics
 }
 
-func NewAgent(pollInterval, reportInterval time.Duration, sender Sender) *Agent {
+func NewAgent(agentConfig *config.AgentConfig) *Agent {
 	return &Agent{
-		pollInterval:   pollInterval,
-		reportInterval: reportInterval,
-		sender:         sender,
-		metrics:        NewMetrics(),
+		config:  agentConfig,
+		sender:  NewRestySender("http://" + agentConfig.Addr),
+		metrics: NewMetrics(),
 	}
 }
 
 func (a *Agent) Run() {
-	pollTicker := time.NewTicker(a.pollInterval)
-	reportTicker := time.NewTicker(a.reportInterval)
+	pollTicker := time.NewTicker(a.config.PollInterval)
+	reportTicker := time.NewTicker(a.config.ReportInterval)
 	defer pollTicker.Stop()
 	defer reportTicker.Stop()
 
