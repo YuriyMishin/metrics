@@ -22,10 +22,10 @@ func TestAgent_Run(t *testing.T) {
 	mockSender := new(MockSender)
 	mockSender.On("Send", mock.Anything).Return(nil)
 
-	agent_config, _ := config.NewAgentConfig()
-	agent_config.PollInterval = 10 * time.Millisecond
-	agent_config.ReportInterval = 20 * time.Millisecond
-	agent := NewAgent(agent_config)
+	agentConfig, _ := config.NewAgentConfig()
+	agentConfig.PollInterval = 10 * time.Millisecond
+	agentConfig.ReportInterval = 20 * time.Millisecond
+	agent := NewAgent(agentConfig)
 	agent.sender = mockSender
 	// Запускаем агент на короткое время
 	go agent.Run()
@@ -38,14 +38,14 @@ func TestAgent_Run(t *testing.T) {
 func TestNewAgent(t *testing.T) {
 	mockSender := new(MockSender)
 
-	agent_config, _ := config.NewAgentConfig()
-	agent_config.PollInterval = 1 * time.Second
-	agent_config.ReportInterval = 2 * time.Second
+	agentConfig, _ := config.NewAgentConfig()
+	agentConfig.PollInterval = 1 * time.Second
+	agentConfig.ReportInterval = 2 * time.Second
 
-	agent := NewAgent(agent_config)
+	agent := NewAgent(agentConfig)
 	agent.sender = mockSender
-	assert.Equal(t, agent_config.PollInterval, agent.config.PollInterval)
-	assert.Equal(t, agent_config.ReportInterval, agent.config.ReportInterval)
+	assert.Equal(t, agentConfig.PollInterval, agent.config.PollInterval)
+	assert.Equal(t, agentConfig.ReportInterval, agent.config.ReportInterval)
 	assert.Equal(t, mockSender, agent.sender)
 	assert.NotNil(t, agent.metrics)
 }
