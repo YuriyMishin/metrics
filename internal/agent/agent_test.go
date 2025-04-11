@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"YuriyMishin/metrics/internal/config"
 	"testing"
 	"time"
 
@@ -21,12 +22,11 @@ func TestAgent_Run(t *testing.T) {
 	mockSender := new(MockSender)
 	mockSender.On("Send", mock.Anything).Return(nil)
 
-	agent := NewAgent(
-		10*time.Millisecond,
-		20*time.Millisecond,
-		mockSender,
-	)
-
+	agent_config, _ := config.NewAgentConfig()
+	agent_config.PollInterval = 10 * time.Millisecond
+	agent_config.ReportInterval = 20 * time.Millisecond
+	agent := NewAgent(agent_config)
+	agent.sender = mockSender
 	// Запускаем агент на короткое время
 	go agent.Run()
 	time.Sleep(50 * time.Millisecond)
@@ -37,13 +37,15 @@ func TestAgent_Run(t *testing.T) {
 
 func TestNewAgent(t *testing.T) {
 	mockSender := new(MockSender)
-	pollInterval := 1 * time.Second
-	reportInterval := 2 * time.Second
 
-	agent := NewAgent(pollInterval, reportInterval, mockSender)
+	agent_config, _ := config.NewAgentConfig()
+	agent_config.PollInterval = 1 * time.Second
+	agent_config.ReportInterval = 2 * time.Second
 
-	assert.Equal(t, pollInterval, agent.pollInterval)
-	assert.Equal(t, reportInterval, agent.reportInterval)
+	agent := NewAgent(agent_config)
+	agent.sender = mockSender
+	assert.Equal(t, agent_config.PollInterval, agent.config.PollInterval)
+	assert.Equal(t, agent_config.ReportInterval, agent.config.ReportInterval)
 	assert.Equal(t, mockSender, agent.sender)
 	assert.NotNil(t, agent.metrics)
 }
