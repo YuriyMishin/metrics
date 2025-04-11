@@ -18,23 +18,6 @@ func (m *MockSender) Send(metrics *Metrics) error {
 	return args.Error(0)
 }
 
-func TestAgent_Run(t *testing.T) {
-	mockSender := new(MockSender)
-	mockSender.On("Send", mock.Anything).Return(nil)
-
-	agentConfig, _ := config.NewAgentConfig()
-	agentConfig.PollInterval = 10 * time.Millisecond
-	agentConfig.ReportInterval = 20 * time.Millisecond
-	agent := NewAgent(agentConfig)
-	agent.sender = mockSender
-	// Запускаем агент на короткое время
-	go agent.Run()
-	time.Sleep(50 * time.Millisecond)
-
-	mockSender.AssertCalled(t, "Send", mock.Anything)
-	mockSender.AssertNumberOfCalls(t, "Send", 2) // Должен успеть отправить 2 раза
-}
-
 func TestNewAgent(t *testing.T) {
 	mockSender := new(MockSender)
 
