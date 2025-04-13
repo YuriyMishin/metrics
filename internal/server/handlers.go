@@ -1,10 +1,12 @@
 package server
 
 import (
+	"YuriyMishin/metrics/internal/logger"
 	"YuriyMishin/metrics/internal/storage"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -15,6 +17,46 @@ type MetricHandlers struct {
 
 func NewMetricHandlers(s storage.Repositories) *MetricHandlers {
 	return &MetricHandlers{storage: s}
+}
+
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	status int
+	size   int
+}
+
+func (w *loggingResponseWriter) WriteHeader(status int) {
+	w.status = status
+	w.ResponseWriter.WriteHeader(status)
+}
+
+func (w *loggingResponseWriter) Write(b []byte) (int, error) {
+	if w.status == 0 {
+		w.status = http.StatusOK
+	}
+	size, err := w.ResponseWriter.Write(b)
+	w.size += size
+	return size, err
+}
+
+func LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		lw := &loggingResponseWriter{ResponseWriter: w}
+
+		next.ServeHTTP(lw, r)
+
+		duration := time.Since(start)
+		log := logger.Get().Sugar()
+
+		log.Infow("request completed",
+			"uri", r.RequestURI,
+			"method", r.Method,
+			"status", lw.status,
+			"size", lw.size,
+			"duration", duration,
+		)
+	})
 }
 
 func (h *MetricHandlers) RootHandler(w http.ResponseWriter, r *http.Request) {

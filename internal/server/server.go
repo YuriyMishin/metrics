@@ -17,6 +17,9 @@ func NewServer() *Server {
 	metricHandlers := NewMetricHandlers(storage)
 
 	r := mux.NewRouter()
+
+	r.Use(LoggingMiddleware)
+
 	r.HandleFunc("/", metricHandlers.RootHandler).Methods("GET")
 	r.HandleFunc("/update/{metricType}/{metricName}/{metricValue}", metricHandlers.UpdateHandler).Methods("POST")
 	r.HandleFunc("/value/{metricType}/{metricName}", metricHandlers.ValueHandler).Methods("GET")
